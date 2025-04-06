@@ -52,11 +52,11 @@ pipeline {
                 echo '🚀 Deploying to remote server...'
                 script {
                     sh """
-                    ssh -o StrictHostKeyChecking=no root@142.93.66.255 << EOF
+                    ssh -o StrictHostKeyChecking=no root@142.93.66.255 << 'EOF'
                     docker stop user-service || true
-                    docker rm user-service || true
+                    docker rm -f user-service || true
                     docker pull $DOCKER_REPO
-                    docker run -d --name user-service -p 5001:5000 $DOCKER_REPO
+                    docker run -d --rm --name user-service -p 5001:5000 $DOCKER_REPO
                     EOF
                     """
                 }
