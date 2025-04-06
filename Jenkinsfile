@@ -57,8 +57,8 @@ pipeline {
                     docker rm -f microservices-project_user-service_1  user-service || true
                     docker pull $DOCKER_REPO
                     docker run -d --name user-service -p 5001:5001 $DOCKER_REPO
-        ENDSSH
-                    """
+                    ENDSSH
+                                """
                 }
             }
         }
