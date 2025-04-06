@@ -5,7 +5,7 @@ pipeline {
         stage('Clone Repository') {
             steps {
                 echo '📥 Cloning repository from GitHub...'
-                git 'https://github.com/Ashu7567/flask-docker-project.git'
+                git 'https://github.com/Ashu7567/microservices-project.git'
             }
         }
 
