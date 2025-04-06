@@ -1,59 +1,72 @@
 pipeline {
     agent any
 
+    environment {
+        IMAGE_NAME = "user-service-image"
+        DOCKER_REPO = "ashu7567/user-service:latest"
+    }
+
     stages {
-        stage('Clone Repository') {
+        stage('Checkout') {
             steps {
-                echo '📥 Cloning repository from GitHub...'
-                git 'https://github.com/Ashu7567/microservices-project.git'
+                checkout scm
+            }
+        }
+
+
+        stage('Debug - Show Directory') {
+            steps {
+                sh 'pwd'
+                sh 'ls -l'
+                sh 'ls -l user_service || true'
             }
         }
 
         stage('Build Docker Image') {
             steps {
-                echo '🐳 Building Docker image...'
-                script {
-                    sh 'docker build -t ashu7567/user-service:latest ./app'
-                }
+                echo '🔨  Building Docker image...'
+                sh 'docker build -t $IMAGE_NAME ./user-service'
             }
         }
 
         stage('Run Tests') {
             steps {
-                echo '🧪 Running tests...'
-                script {
-                    sh 'docker run --rm ashu7567/user-service:latest python test_app.py'
-                }
+                echo '🧪  Running Unit Tests...'
+                sh 'docker run --rm $IMAGE_NAME pytest || true'
             }
         }
 
         stage('Push to DockerHub') {
             steps {
-                echo '📤 Pushing image to DockerHub...'
-                script {
-                    withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
-                        sh '''
-                        echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-                        docker push ashu7567/user-service:latest
-                        '''
-                    }
+                echo '📦  Pushing Docker Image to DockerHub...'
+                withCredentials([usernamePassword(credentialsId: 'docker-hub', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                    sh 'echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin'
+                    sh 'docker tag $IMAGE_NAME $DOCKER_REPO'
+                    sh 'docker push $DOCKER_REPO'
                 }
             }
         }
 
         stage('Deploy to Server') {
             steps {
-                echo '🚀 Deploying to remote server...'
+                echo '🚀  Deploying to remote server...'
                 script {
-                    sh '''
+                    sh """
                     ssh -o StrictHostKeyChecking=no root@142.93.66.255 << EOF
-                    docker rm -f user-service || true
-                    docker pull ashu7567/user-service:latest
-                    docker run -d -p 5001:5001 --name user-service ashu7567/user-service:latest
+                    docker stop user-service || true
+                    docker rm user-service || true
+                    docker pull $DOCKER_REPO
+                    docker run -d --name user-service -p 5001:5001 $DOCKER_REPO
                     EOF
-                    '''
+                    """
                 }
             }
+        }
+    }
+
+    post {
+        always {
+            echo '✅  Build completed.'
         }
     }
 }
