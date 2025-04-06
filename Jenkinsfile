@@ -58,7 +58,7 @@ pipeline {
                     docker pull $DOCKER_REPO
                     docker run -d --name user-service -p 5001:5001 $DOCKER_REPO
                     ENDSSH
-                                """
+                                '''
                 }
             }
         }
