@@ -13,6 +13,15 @@ pipeline {
             }
         }
 
+
+        stage('Debug - Show Directory') {
+            steps {
+                sh 'pwd'
+                sh 'ls -l'
+                sh 'ls -l user_service || true'
+            }
+        }
+
         stage('Build Docker Image') {
             steps {
                 echo '🔨 Building Docker image...'
