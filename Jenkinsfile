@@ -56,9 +56,9 @@ pipeline {
                     docker stop user-service || true
                     docker rm -f user-service || true
                     docker pull $DOCKER_REPO
-                    docker run -d --rm --name user-service -p 5001:5000 $DOCKER_REPO
+                    docker run -d --name user-service -p 5001:5001 $DOCKER_REPO
                     EOF
-                    """
+                  '''
                 }
             }
         }
