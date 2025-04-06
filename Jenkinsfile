@@ -13,7 +13,6 @@ pipeline {
             }
         }
 
-
         stage('Debug - Show Directory') {
             steps {
                 sh 'pwd'
@@ -51,14 +50,14 @@ pipeline {
             steps {
                 echo '🚀  Deploying to remote server...'
                 script {
-                    sh """
-                    ssh -o StrictHostKeyChecking=no root@142.93.66.255 << 'ENDSSH'
-                    docker stop microservices-project_user-service_1  user-service || true
-                    docker rm -f microservices-project_user-service_1  user-service || true
-                    docker pull $DOCKER_REPO
-                    docker run -d --name user-service -p 5001:5001 $DOCKER_REPO
-                    ENDSSH
-                                '''
+                    sh '''#!/bin/bash
+ssh -o StrictHostKeyChecking=no root@142.93.66.255 << 'ENDSSH'
+docker stop microservices-project_user-service_1 user-service || true
+docker rm -f microservices-project_user-service_1 user-service || true
+docker pull ashu7567/user-service:latest
+docker run -d --name user-service -p 5001:5001 ashu7567/user-service:latest
+ENDSSH
+                    '''
                 }
             }
         }
