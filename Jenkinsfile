@@ -25,7 +25,7 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 echo '🔨 Building Docker image...'
-                sh 'docker build -t $IMAGE_NAME ./user_service'
+                sh 'docker build -t $IMAGE_NAME ./user-service'
             }
         }
 
