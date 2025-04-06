@@ -52,12 +52,12 @@ pipeline {
                 echo '🚀  Deploying to remote server...'
                 script {
                     sh """
-                    ssh -o StrictHostKeyChecking=no root@142.93.66.255 << EOF
+                    ssh -o StrictHostKeyChecking=no root@142.93.66.255 << 'ENDSSH'
                     docker stop microservices-project_user-service_1  user-service || true
                     docker rm -f microservices-project_user-service_1  user-service || true
                     docker pull $DOCKER_REPO
                     docker run -d --name user-service -p 5001:5001 $DOCKER_REPO
-                    EOF
+                    ENDSSH
                     """
                 }
             }
