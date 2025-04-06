@@ -43,7 +43,7 @@ pipeline {
                 echo '🚀 Deploying to remote server...'
                 script {
                     sh """
-                    ssh -o StrictHostKeyChecking=no root@<your-server-ip> << EOF
+                    ssh -o StrictHostKeyChecking=no root@142.93.66.255 << EOF
                     docker stop user-service || true
                     docker rm user-service || true
                     docker pull $DOCKER_REPO
